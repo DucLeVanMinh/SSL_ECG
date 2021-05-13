@@ -1,9 +1,6 @@
-# ECG_Repl
-My work on replicating some published networks on different datasets
+# SELF-SUPERVISED LEARNING FOR ECG ARRHYTHMIA  CLASSFICATION
 
-  1. Physionet 2017 Dataset
-  2. Physionet 2020 Dataset 
-  3. MIT-BIH 
+This is the offical code repository accompanying our paper on Self-supervised Learning for ECG Arhythmia Classificaition.
 
-Run the network following papers on different datasets:
-  1. 
+## Usage information
+### Preparation
