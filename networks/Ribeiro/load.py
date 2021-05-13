@@ -28,8 +28,6 @@ def load_challenge_data(filename):
     return data, header_data
 
 def import_key_data(path):
-    gender=[]
-    age=[]
     labels=[]
     ecg_filenames=[]
     for subdir, dirs, files in sorted(os.walk(path)):
@@ -39,36 +37,7 @@ def import_key_data(path):
                 data, header_data = load_challenge_data(filepath)
                 labels.append(header_data[15][5:-1])
                 ecg_filenames.append(filepath)
-                gender.append(header_data[14][6:-1])
-                age.append(header_data[13][6:-1])
-    return gender, age, labels, ecg_filenames
-
-def clean_up_gender_data(gender):
-  gender = np.asarray(gender)
-  gender[np.where(gender == "Male")] = 0
-  gender[np.where(gender == "male")] = 0
-  gender[np.where(gender == "M")] = 0
-  gender[np.where(gender == "Female")] = 1
-  gender[np.where(gender == "female")] = 1
-  gender[np.where(gender == "F")] = 1
-  gender[np.where(gender == "NaN")] = 2
-  np.unique(gender)
-  gender = gender.astype(np.int)
-  return gender
-
-def clean_up_age_data(age):
-    age = np.asarray(age)
-    age[np.where(age == "NaN")] = -1
-    np.unique(age)
-    age = age.astype(np.int)
-    return age
-
-def import_gender_and_age(age, gender):
-    gender_binary = clean_up_gender_data(gender)
-    age_clean = clean_up_age_data(age)
-    print("gender data shape: {}".format(gender_binary.shape[0]))
-    print("age data shape: {}".format(age_clean.shape[0]))
-    return age_clean, gender_binary
+    return labels, ecg_filenames
 
 def make_undefined_class(labels, df_unscored):
     df_labels = pd.DataFrame(labels)
