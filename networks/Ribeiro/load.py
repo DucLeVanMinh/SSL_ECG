@@ -3,7 +3,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-# import tensorflow_addons as tfa
 import tensorflow as tf
 from tensorflow import keras
 from keras.utils import plot_model
@@ -39,61 +38,44 @@ def import_key_data(path):
                 ecg_filenames.append(filepath)
     return labels, ecg_filenames
 
-def make_undefined_class(labels, df_unscored):
-    df_labels = pd.DataFrame(labels)
-    for i in range(len(df_unscored.iloc[0:,1])):
-        df_labels.replace(to_replace=str(df_unscored.iloc[i,1]), inplace=True ,value="undefined class", regex=True)
-
-    return df_labels
-
-def onehot_encode(df_labels):
-    one_hot = MultiLabelBinarizer()
-    y=one_hot.fit_transform(df_labels[0].str.split(pat=','))
-    y = np.delete(y, -1, axis=1)
-    return y, one_hot.classes_[0:-1]
+def load_ecg_data(path)
 
 
-def get_labels_for_all_combinations(y):
-    y_all_combinations = LabelEncoder().fit_transform([''.join(str(l)) for l in y])
-    return y_all_combinations
 
-def split_data(labels, y_all_combo):
-    folds = list(StratifiedKFold(n_splits=10, shuffle=True, random_state=42).split(labels,y_all_combo))
-    print("Training split: {}".format(len(folds[0][0])))
-    print("Validation split: {}".format(len(folds[0][1])))
-    return folds
+def random_mix_12lead(signal):
+  """
+  SSL Approach 1: Mixing the channels of ECG
+  """
+  order = np.arange(12)
+  np.random.shuffle(order)
+  return signal[:, order]
 
-def shuffle_batch_generator(batch_size, gen_x,gen_y, snomed_classes): 
-    # np.random.shuffle(order_array)
-    batch_features = np.zeros((batch_size,STEP, 12))
-    batch_labels = np.zeros((batch_size,snomed_classes.shape[0])) #drop undef class
+def split_join_12lead(signal, no_split=2):
+  """
+  SSL Approach 2: picking random channels, split it according to the number of 
+  splits (no_split) and join them. 
+  E.g. signal = [1,2,3,4,5,6], no_split = 2
+      -> output = [4,5,6,1,2,3]
+  """
+  new_signal = np.copy(signal)
+  order = np.arange(12)
+  np.random.shuffle(order)
+  # pick how many channels to split and join
+  no_channels = np.random.randint(0, 12, size=1)[0] 
+  for i in order[0:no_channels]:
+    new_signal[:,i] = np.hstack(np.split(new_signal[:,i], no_split)[::-1])
+  return new_signal
+
+def SSL_batch_generator( signal, batch_size=3): 
+    batch_signal = np.zeros((batch_size, STEP, 12))
     while True:
-        for i in range(batch_size):
-
-            batch_features[i] = next(gen_x)
-            batch_labels[i] = next(gen_y)
-            
-        yield batch_features, batch_labels
-
-def generate_y_shuffle(y_train, order_array):
-    while True:
-        for i in order_array:
-            y_shuffled = y_train[i]
-            yield y_shuffled
+      for i in range(signal.shape[0]):
+        batch_signal[0] = signal[i]
+        batch_signal[1] = random_mix_12lead(signal[i])
+        batch_signal[2] = split_join_12lead(signal[i], no_split=2)
+      yield batch_signal
 
 
-def generate_X_shuffle(X_train, order_array):
-    while True:
-        for i in order_array:
-                #if filepath.endswith(".mat"):
-                    data, header_data = load_challenge_data(X_train[i])
-                    X_train_new = pad_sequences(data, maxlen=STEP, truncating='post',padding="post")
-                    X_train_new = X_train_new.reshape(STEP,12)
-                    yield X_train_new
 
-def calculating_class_weights(y_true):
-    number_dim = np.shape(y_true)[1]
-    weights = np.empty([number_dim, 2])
-    for i in range(number_dim):
-        weights[i] = compute_class_weight('balanced', [0.,1.], y_true[:, i])
-    return weights
+
+
