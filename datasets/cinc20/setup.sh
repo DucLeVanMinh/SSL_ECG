@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /content/ECG_Repl/datasets/cinc20
+cd /content/SSL_ECG/datasets/cinc20
 
 # download and unzip 
 kaggle datasets download -d bjoernjostein/georgia-12lead-ecg-challenge-database
