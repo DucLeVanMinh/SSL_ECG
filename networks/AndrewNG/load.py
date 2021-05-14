@@ -2,6 +2,9 @@ import json
 import tqdm
 import scipy.io as sio
 import numpy as np
+import random
+
+random.seed(86)
 
 STEP = 256
 
@@ -28,6 +31,8 @@ def pad(x, val=0, dtype=np.float32):
     for e, i in enumerate(x):
         padded[e, :len(i)] = i
     return padded
+
+
 
 def compute_mean_std(x):
     x = np.hstack(x)
@@ -68,4 +73,16 @@ def data_generator(batch_size, preproc, x, y):
         for batch in batches:
             x, y = zip(*batch)
             yield preproc.process(x, y)
+
+def SSL_generator(signal):
+  mean, std = compute_mean_std(signal)
+  num_examples = len(signal)
+  examples = sorted(signal, key = lambda x: x.shape[0])
+  random.shuffle(examples)
+  while True:
+    for sig in examples:
+      origin_sig = (sig-mean)/std 
+      ssl_sig    = (split_join_1lead(sig)-mean)/std 
+      batch = np.stack((origin_sig[:,None], ssl_sig[:,None]), axis=0)
+      yield batch
 
