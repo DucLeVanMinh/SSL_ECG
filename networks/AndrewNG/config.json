@@ -8,13 +8,6 @@
     "conv_num_skip": 2,
     "conv_increase_channels_at": 4,
 
-    "learning_rate": 0.0001,
-    "batch_size": 32,
-
-    // "train": "/content/ECG_Repl/datasets/cinc17/train.json",
-    // "dev":   "/content/ECG_Repl/datasets/cinc17/dev.json",
-
-    "generator": true,
-
-    "save_dir": "saved"
+    "learning_rate": 0.001,
+    "batch_size": 32
 }
