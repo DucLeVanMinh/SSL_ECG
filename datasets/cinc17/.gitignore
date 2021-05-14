@@ -3,3 +3,4 @@ train.json
 dev.json
 /training2017
 /saved_models
+data.json
