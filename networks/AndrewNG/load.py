@@ -1,6 +1,7 @@
 import json
 import tqdm
 import scipy.io as sio
+import numpy as np
 
 STEP = 256
 
@@ -55,4 +56,16 @@ class Preproc:
                 y, num_classes=len(self.classes))
         return y
 
-  
+def data_generator(batch_size, preproc, x, y):
+    num_examples = len(x)
+    examples = zip(x, y)
+    examples = sorted(examples, key = lambda x: x[0].shape[0])
+    end = num_examples - batch_size + 1
+    batches = [examples[i:i+batch_size]
+                for i in range(0, end, batch_size)]
+    random.shuffle(batches)
+    while True:
+        for batch in batches:
+            x, y = zip(*batch)
+            yield preproc.process(x, y)
+
