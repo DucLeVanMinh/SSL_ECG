@@ -38,12 +38,6 @@ def import_key_data(path):
                 ecg_filenames.append(filepath)
     return labels, ecg_filenames
 
-def load_ecg_data(ecg_filenames):
-  for i in range(ecg_filenames.shape[0]):
-    data, header_data = load_challenge_data(ecg_filenames[i])
-    data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")
-    yield data.T
-
 def random_mix_12lead(signal):
   """
   SSL Approach 1: Mixing the channels of ECG
@@ -63,15 +57,15 @@ def split_join_12lead(signal, no_split=2):
     new_signal[:,i] = np.hstack(np.split(new_signal[:,i], no_split)[::-1])
   return new_signal
 
-def SSL_batch_generator( signal, batch_size=3):
+def SSL_batch_generator(ecg_filenames):
   for i in range(ecg_filenames.shape[0]):
     data, header_data = load_challenge_data(ecg_filenames[i])
     data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")
 
-    batch_signal_1 = data.T
-    batch_signal_2 = random_mix_12lead(batch_signal_1)
-    batch_signal_3 = split_join_12lead(batch_signal_1, no_split=2)
-    yield np.stack((batch_1,batch_2,batch_3), axis = 0)
+    signal_1 = data.T
+    signal_2 = random_mix_12lead(signal_1)
+    signal_3 = split_join_12lead(signal_1, no_split=2)
+    yield np.stack((signal_1,signal_2,signal_3), axis = 0)
 
 
 
