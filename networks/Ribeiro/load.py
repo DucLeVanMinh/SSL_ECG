@@ -38,9 +38,11 @@ def import_key_data(path):
                 ecg_filenames.append(filepath)
     return labels, ecg_filenames
 
-def load_ecg_data(path)
-
-
+def load_ecg_data(ecg_filenames):
+  for i in range(ecg_filenames.shape[0]):
+    data, header_data = load_challenge_data(ecg_filenames[i])
+    data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")
+    yield data.T
 
 def random_mix_12lead(signal):
   """
@@ -51,12 +53,7 @@ def random_mix_12lead(signal):
   return signal[:, order]
 
 def split_join_12lead(signal, no_split=2):
-  """
-  SSL Approach 2: picking random channels, split it according to the number of 
-  splits (no_split) and join them. 
-  E.g. signal = [1,2,3,4,5,6], no_split = 2
-      -> output = [4,5,6,1,2,3]
-  """
+
   new_signal = np.copy(signal)
   order = np.arange(12)
   np.random.shuffle(order)
