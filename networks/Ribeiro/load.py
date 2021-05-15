@@ -58,14 +58,15 @@ def split_join_12lead(signal, no_split=2):
   return new_signal
 
 def SSL_batch_generator(ecg_filenames):
-  for i in range(ecg_filenames.shape[0]):
-    data, header_data = load_challenge_data(ecg_filenames[i])
-    data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")
+  while True:
+    for i in range(ecg_filenames.shape[0]):
+      data, header_data = load_challenge_data(ecg_filenames[i])
+      data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")
 
-    signal_1 = data.T
-    signal_2 = random_mix_12lead(signal_1)
-    signal_3 = split_join_12lead(signal_1, no_split=2)
-    yield np.stack((signal_1,signal_2,signal_3), axis = 0)
+      signal_1 = data.T
+      signal_2 = random_mix_12lead(signal_1)
+      signal_3 = split_join_12lead(signal_1, no_split=2)
+      yield np.stack((signal_1,signal_2,signal_3), axis = 0)
 
 
 
