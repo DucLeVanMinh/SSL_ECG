@@ -14,6 +14,9 @@ from scipy.io import loadmat
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.model_selection import StratifiedKFold
 from scipy import optimize
+import random 
+
+random.seed(86)
 
 STEP = 5000
 
@@ -59,6 +62,7 @@ def split_join_12lead(signal, no_split=2):
 
 def SSL_batch_generator(ecg_filenames):
   while True:
+    random.shuffle(ecg_filenames)
     for i in range(ecg_filenames.shape[0]):
       data, header_data = load_challenge_data(ecg_filenames[i])
       data = pad_sequences(data, maxlen=STEP, truncating='post', padding="post")

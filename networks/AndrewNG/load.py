@@ -78,8 +78,9 @@ def SSL_generator(signal):
   mean, std = compute_mean_std(signal)
   num_examples = len(signal)
   examples = sorted(signal, key = lambda x: x.shape[0])
-  random.shuffle(examples)
+  # random.shuffle(examples)
   while True:
+    random.shuffle(examples)
     for sig in examples:
       origin_sig = (sig-mean)/std 
       ssl_sig    = (split_join_1lead(sig)-mean)/std 
