@@ -96,4 +96,17 @@ def data_split(ecgs, labels, train_frac):
   train = dataset[:train_cut]
   dev   = dataset[train_cut:]
 
-  return train, dev
+  train_ecg   = []
+  train_label = []
+  for ecg, label in train:
+    train_ecg.append(ecg)
+    train_label.append(label)
+
+  dev_ecg   = []
+  dev_label = []
+  for ecg, label in dev:
+    dev_ecg.append(ecg)
+    dev_label.append(label)
+
+  return (train_ecg, train_label), (dev_ecg, dev_label)
+
