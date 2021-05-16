@@ -32,8 +32,6 @@ def pad(x, val=0, dtype=np.float32):
         padded[e, :len(i)] = i
     return padded
 
-
-
 def compute_mean_std(x):
     x = np.hstack(x)
     return (np.mean(x).astype(np.float32),
@@ -68,8 +66,9 @@ def data_generator(batch_size, preproc, x, y):
     end = num_examples - batch_size + 1
     batches = [examples[i:i+batch_size]
                 for i in range(0, end, batch_size)]
-    random.shuffle(batches)
+    # random.shuffle(batches)
     while True:
+        random.shuffle(batches)
         for batch in batches:
             x, y = zip(*batch)
             yield preproc.process(x, y)
@@ -87,3 +86,14 @@ def SSL_generator(signal):
       batch = np.stack((origin_sig[:,None], ssl_sig[:,None]), axis=0)
       yield batch
 
+def data_split(ecgs, labels, train_frac):
+  dataset = []
+  for ecg, label in zip(ecgs, labels):
+    dataset.append((ecg, label))
+
+  train_cut = int(train_frac*len(dataset))
+  random.shuffle(dataset)
+  train = dataset[:train_cut]
+  dev   = dataset[train_cut:]
+
+  return train, dev
