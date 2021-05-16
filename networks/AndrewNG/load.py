@@ -3,6 +3,7 @@ import tqdm
 import scipy.io as sio
 import numpy as np
 import random
+from tensorflow import keras
 
 random.seed(86)
 
@@ -55,7 +56,7 @@ class Preproc:
 
     def process_y(self, y):
         y = pad([[self.class_to_int[c] for c in s] for s in y], val=3, dtype=np.int32) 
-        y = keras.utils.np_utils.to_categorical(
+        y = keras.utils.to_categorical(
                 y, num_classes=len(self.classes))
         return y
 
