@@ -84,10 +84,8 @@ def SSL_generator(signal):
     for sig in examples:
       origin_sig = (sig-mean)/std 
       ssl_sig    = (split_join_1lead(sig)-mean)/std 
-      ssl_sig_2  = (split_join_1lead(sig, 4)-mean)/std 
       batch = np.stack((origin_sig[:,None], 
-                        ssl_sig[:,None],
-                        ssl_sig_2[:, None]), axis=0)
+                        ssl_sig[:,None]), axis=0)
       yield batch
 
 def data_split(ecgs, labels, train_frac):
