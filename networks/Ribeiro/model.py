@@ -94,7 +94,7 @@ def get_model(n_classes, input_shape ,last_layer='softmax'):
                         kernel_initializer=kernel_initializer)([x, y])
     x, _ = ResidualUnit(16, 320, kernel_size=kernel_size,
                         kernel_initializer=kernel_initializer)([x, y])
-    # x = Flatten()(x)
-    # diagn = Dense(n_classes, activation=last_layer, kernel_initializer=kernel_initializer)(x)
-    model = Model(signal, x)
+    x = Flatten()(x)
+    diagn = Dense(n_classes, activation=last_layer, kernel_initializer=kernel_initializer)(x)
+    model = Model(signal, diagn)
     return model
