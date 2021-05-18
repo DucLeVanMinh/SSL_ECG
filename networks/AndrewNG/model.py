@@ -107,8 +107,8 @@ def add_resnet_layers(layer, **params):
 def add_output_layer(layer, **params):
     from keras.layers.core import Dense, Activation
     from keras.layers.wrappers import TimeDistributed
-    layer = TimeDistributed(Dense(params["num_categories"]))(layer)
-    return Activation('softmax')(layer)
+    layer = TimeDistributed(Dense(params["num_categories"], name='LastLayer'))(layer)
+    return Activation('softmax', name='LastActivation')(layer)
 
 def add_compile(model, **params):
     from keras.optimizers import Adam
