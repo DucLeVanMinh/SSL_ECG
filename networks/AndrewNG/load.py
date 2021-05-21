@@ -80,11 +80,11 @@ def SSL_generator(signal):
   examples = sorted(signal, key = lambda x: x.shape[0])
   # random.shuffle(examples)
   while True:
-    random.shuffle(examples)
+    # random.shuffle(examples)
     for sig in examples:
-      origin_sig = (sig-mean)/std 
-      ssl_sig    = (split_join_1lead(sig)-mean)/std + np.random.normal(loc=0.0, scale=1.0, size=origin_sig.shape)
-      ssl_sig_2  = (split_join_1lead(sig, 4)-mean)/std + np.random.normal(loc=0.0, scale=1.0, size=origin_sig.shape)
+      origin_sig = sig
+      ssl_sig    = split_join_1lead(sig) 
+      ssl_sig_2  = split_join_1lead(sig, 4)
       batch = np.stack((origin_sig[:,None], 
                         ssl_sig[:,None],
                         ssl_sig_2[:,None]), axis=0)
