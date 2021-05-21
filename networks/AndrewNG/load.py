@@ -115,8 +115,6 @@ def SSL_process(x):
   x = x[:, :, None]
   return x
 
-def SSL_label()
-
 def data_split(ecgs, labels, train_frac):
   dataset = []
   for ecg, label in zip(ecgs, labels):
