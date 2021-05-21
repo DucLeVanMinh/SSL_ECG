@@ -96,19 +96,24 @@ def SSL_generator(signal):
                ssl_sig_3[:,None]]
       yield batch
 
-def SSL_batch_generator(batch_size, SSL_generator, data_size):
+def SSL_batch_generator(batch_size, data_gen, data_size):
   while True:
     for i in range(int(data_size/batch_size)):
       batch = []
       for i in range(batch_size):
-        batch.append(next(gen)) 
+        batch.append(next(data_gen)) 
 
       random.shuffle(batch)
       batches = []
       for i in range(batch_size):
         batches += batch[i]
 
-      yield batches
+      yield SSL_process(batches)
+
+def SSL_process(x):
+  x = pad(x)
+  x = x[:, :, None]
+  return x
 
 def data_split(ecgs, labels, train_frac):
   dataset = []
