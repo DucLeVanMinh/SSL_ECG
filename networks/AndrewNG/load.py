@@ -82,13 +82,33 @@ def SSL_generator(signal):
   while True:
     # random.shuffle(examples)
     for sig in examples:
-      origin_sig = sig
-      ssl_sig    = split_join_1lead(sig) 
-      ssl_sig_2  = split_join_1lead(sig, 4)
-      batch = np.stack((origin_sig[:,None], 
-                        ssl_sig[:,None],
-                        ssl_sig_2[:,None]), axis=0)
+      origin_sig = (sig - mean)/std
+      ssl_sig    = (split_join_1lead(sig) - mean)/std
+      ssl_sig_2  = (split_join_1lead(sig, 4) - mean)/std
+      ssl_sig_3  = (split_join_1lead(sig, 8) - mean)/std
+      # batch = np.stack((origin_sig[:,None], 
+      #                   ssl_sig[:,None],
+      #                   ssl_sig_2[:,None],
+      #                   ssl_sig_3[:,None]), axis=0)
+      batch = [origin_sig[:,None],
+               ssl_sig[:,None],
+               ssl_sig_2[:,None],
+               ssl_sig_3[:,None]]
       yield batch
+
+def SSL_batch_generator(batch_size, SSL_generator, data_size):
+  while True:
+    for i in range(int(data_size/batch_size)):
+      batch = []
+      for i in range(batch_size):
+        batch.append(next(gen)) 
+
+      random.shuffle(batch)
+      batches = []
+      for i in range(batch_size):
+        batches += batch[i]
+
+      yield batches
 
 def data_split(ecgs, labels, train_frac):
   dataset = []
