@@ -91,9 +91,9 @@ def SSL_generator(signal):
       #                   ssl_sig_2[:,None],
       #                   ssl_sig_3[:,None]), axis=0)
       batch = [origin_sig,
-               ssl_sig,
-               ssl_sig_2,
-               ssl_sig_3]
+               ssl_sig]
+              #  ssl_sig_2,
+              #  ssl_sig_3]
       yield batch
 
 def SSL_batch_generator(batch_size, data_gen, data_size):
