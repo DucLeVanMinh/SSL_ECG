@@ -23,8 +23,16 @@ def load_ecg(record):
     trunc_samp = STEP * int(len(ecg) / STEP)
     return ecg[:trunc_samp]
 
+# def split_join_1lead(signal, no_split=2):
+#   return np.hstack(np.split(signal, no_split)[::-1])
+
 def split_join_1lead(signal, no_split=2):
-  return np.hstack(np.split(signal, no_split)[::-1])
+  split = np.split(signal, no_split)
+  if no_split > 2:
+    random.shuffle(split)
+    return np.hstack(split)
+  else:
+    return np.hstack(split[::-1])
 
 def pad(x, val=0, dtype=np.float32):
     max_len = max(len(i) for i in x)
@@ -86,14 +94,16 @@ def SSL_generator(signal):
       ssl_sig    = (split_join_1lead(sig) - mean)/std
       ssl_sig_2  = (split_join_1lead(sig, 4) - mean)/std
       ssl_sig_3  = (split_join_1lead(sig, 8) - mean)/std
+      ssl_sig_4  = (split_join_1lead(sig, 16) - mean)/std
       # batch = np.stack((origin_sig[:,None], 
       #                   ssl_sig[:,None],
       #                   ssl_sig_2[:,None],
       #                   ssl_sig_3[:,None]), axis=0)
       batch = [origin_sig,
                ssl_sig,
-               ssl_sig_2]
-              #  ssl_sig_3]
+               ssl_sig_2,
+               ssl_sig_3,
+               ssl_sig_4]
       yield batch
 
 def SSL_batch_generator(batch_size, data_gen, data_size):
